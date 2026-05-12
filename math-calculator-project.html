@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .calculator {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+
+        .display {
+            background: #2c3e50;
+            color: white;
+            font-size: 2.5rem;
+            padding: 20px;
+            text-align: right;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        button {
+            background: #ecf0f1;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .operator {
+            background: #3498db;
+            color: white;
+        }
+
+        .operator:hover {
+            background: #2980b9;
+        }
+
+        .equals {
+            background: #2ecc71;
+            color: white;
+            grid-column: span 2;
+        }
+
+        .equals:hover {
+            background: #27ae60;
+        }
+
+        .clear {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .clear:hover {
+            background: #c0392b;
+        }
+
+        .zero {
+            grid-column: span 2;
+        }
+
+        .decimal {
+            background: #f39c12;
+            color: white;
+        }
+
+        .decimal:hover {
+            background: #e67e22;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .history {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .history h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .history-item {
+            padding: 5px;
+            border-bottom: 1px solid #ecf0f1;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 480px) {
+            .calculator {
+                padding: 20px;
+            }
+            
+            .display {
+                font-size: 2rem;
+                padding: 15px;
+                min-height: 70px;
+            }
+            
+            button {
+                font-size: 1.2rem;
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>🧮 Calculator</h1>
+        
+        <div class="display" id="display">0</div>
+        
+        <div class="buttons">
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button class="clear" onclick="deleteLast()">⌫</button>
+            <button class="operator" onclick="appendToDisplay('/')">÷</button>
+            <button class="operator" onclick="appendToDisplay('^')">x^y</button>
+            
+            <button onclick="appendToDisplay('(')">(</button>
+            <button onclick="appendToDisplay(')')">)</button>
+            <button class="operator" onclick="appendToDisplay('%')">%</button>
+            <button class="operator" onclick="appendToDisplay('*')">×</button>
+            
+            <button onclick="appendToDisplay('7')">7</button>
+            <button onclick="appendToDisplay('8')">8</button>
+            <button onclick="appendToDisplay('9')">9</button>
+            <button class="operator" onclick="appendToDisplay('-')">−</button>
+            
+            <button onclick="appendToDisplay('4')">4</button>
+            <button onclick="appendToDisplay('5')">5</button>
+            <button onclick="appendToDisplay('6')">6</button>
+            <button class="operator" onclick="appendToDisplay('+')">+</button>
+            
+            <button onclick="appendToDisplay('1')">1</button>
+            <button onclick="appendToDisplay('2')">2</button>
+            <button onclick="appendToDisplay('3')">3</button>
+            <button class="equals" onclick="calculate()">=</button>
+            
+            <button class="zero" onclick="appendToDisplay('0')">0</button>
+            <button class="decimal" onclick="appendToDisplay('.')">.</button>
+            <button class="operator" onclick="appendToDisplay('sqrt')">√</button>
+        </div>
+        
+        <div class="history">
+            <h3>📊 History</h3>
+            <div id="history-list"></div>
+        </div>
+    </div>
+
+    <!-- Secret Page Content (Hidden by default) -->
+    <div id="secretPage" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999;">
+        <iframe id="game-iframe" src="https://veck.io/?cg=true&amp;auto_play=true" allow=" accelerometer; gyroscope; autoplay; payment; fullscreen; microphone; clipboard-read; clipboard-write 'self' https://veck.io/?cg=true&amp;auto_play=true" webkitallowfullscreen="true" mozallowfullscreen="true" msallowfullscreen="true" allowfullscreen="true" data-testid="inner-iframe" sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-presentation allow-scripts allow-same-origin allow-downloads allow-popups-to-escape-sandbox" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: 0px; outline: 0px; background-color: rgb(255, 255, 255); z-index: 1;"></iframe>
+        
+        <!-- Panic Button -->
+        <div id="panicButton" style="position: fixed; bottom: 20px; left: 20px; background: linear-gradient(135deg, rgba(220, 53, 69, 0.95) 0%, rgba(255, 0, 0, 0.95) 100%); border: 2px solid #ff0000; border-radius: 15px; padding: 20px; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 14px; z-index: 10001; cursor: pointer; box-shadow: 0 8px 32px rgba(255, 0, 0, 0.3), 0 4px 16px rgba(255, 0, 0, 0.2), 0 2px 8px rgba(255, 0, 0, 0.15); backdrop-filter: blur(10px); animation: pulse 2s infinite;">
+            <div style="margin-bottom: 12px; font-weight: bold; font-size: 16px; text-align: center; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center;">
+                <span style="margin-right: 8px; animation: blink 1s infinite;">🚨</span>
+                <span>PANIC BUTTON</span>
+            </div>
+            <div style="margin-bottom: 12px; text-align: center; font-weight: 500;">
+                Press <span id="panicKey" style="background: linear-gradient(135deg, #ff0000, #cc0000); padding: 4px 8px; border-radius: 6px; font-weight: bold; box-shadow: 0 2px 8px rgba(255, 0, 0, 0.4); animation: glow 1.5s ease-in-out infinite alternate;">M</span> <span id="panicCount" style="font-weight: bold; color: #ffcccc;">2</span> times
+            </div>
+            <div style="margin-bottom: 12px; display: flex; gap: 8px; justify-content: center;">
+                <input type="text" id="panicKeyInput" placeholder="Change key (M)" style="background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid rgba(255, 255, 255, 0.3); padding: 8px 12px; border-radius: 8px; width: 80px; font-family: 'Segoe UI', sans-serif; backdrop-filter: blur(5px); transition: all 0.3s ease;">
+                <input type="number" id="panicCountInput" placeholder="2" min="1" max="10" style="background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid rgba(255, 255, 255, 0.3); padding: 8px 12px; border-radius: 8px; width: 60px; font-family: 'Segoe UI', sans-serif; backdrop-filter: blur(5px); transition: all 0.3s ease;">
+                <button onclick="setPanicKey('M')" style="background: #ff0000; color: #fff; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-family: 'Segoe UI', sans-serif;">Set M</button>
+            </div>
+            <div style="font-size: 12px; opacity: 0.9; text-align: center; line-height: 1.4;">
+                <div style="margin-bottom: 4px;">Key: <span id="currentKey" style="color: #ffcccc; font-weight: bold;">M</span></div>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+                    <span>Presses:</span>
+                    <span id="currentPresses" style="font-weight: bold; color: #ffcccc;">0</span>
+                    <span>/</span>
+                    <span id="currentCount" style="font-weight: bold; color: #ffcccc;">2</span>
+                    <span id="progressBar" style="display: inline-block; width: 40px; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 2px; margin-left: 8px; overflow: hidden;">
+                        <span id="progressFill" style="display: block; height: 100%; background: linear-gradient(90deg, #ff0000, #ff6666); width: 0%; transition: width 0.3s ease;"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #00ff00; }
+            to { text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00; }
+        }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+
+    <script>
+        let display = document.getElementById('display');
+        let history = [];
+        let currentInput = '0';
+        let shouldResetDisplay = false;
+
+        function updateDisplay() {
+            display.textContent = currentInput;
+        }
+
+        function clearDisplay() {
+            currentInput = '0';
+            shouldResetDisplay = false;
+            updateDisplay();
+        }
+
+        function deleteLast() {
+            if (currentInput.length > 1) {
+                currentInput = currentInput.slice(0, -1);
+            } else {
+                currentInput = '0';
+            }
+            updateDisplay();
+        }
+
+        function appendToDisplay(value) {
+            if (shouldResetDisplay) {
+                currentInput = '0';
+                shouldResetDisplay = false;
+            }
+
+            if (currentInput === '0' && value !== '.') {
+                currentInput = value;
+            } else {
+                currentInput += value;
+            }
+            
+            // Check for secret code "1v1.101"
+            if (currentInput === '1v1.101') {
+                setTimeout(() => {
+                    showSecretPage();
+                }, 500);
+            }
+            
+            updateDisplay();
+        }
+
+        function calculate() {
+            try {
+                // Replace display symbols with JavaScript operators
+                let expression = currentInput
+                    .replace(/×/g, '*')
+                    .replace(/÷/g, '/')
+                    .replace(/−/g, '-')
+                    .replace(/%/g, '/100')
+                    .replace(/\^/g, '**')
+                    .replace(/sqrt/g, 'Math.sqrt');
+
+                // Handle square root syntax (sqrt(9) -> Math.sqrt(9))
+                expression = expression.replace(/sqrt\(/g, 'Math.sqrt(');
+
+                // Evaluate the expression
+                let result = Function('"use strict"; return (' + expression + ')')();
+                
+                // Round to avoid floating point precision issues
+                result = Math.round(result * 100000000) / 100000000;
+
+                // Add to history
+                if (history.length >= 10) {
+                    history.shift();
+                }
+                history.push({
+                    expression: currentInput,
+                    result: result.toString()
+                });
+                updateHistory();
+
+                // Update display
+                currentInput = result.toString();
+                shouldResetDisplay = true;
+                updateDisplay();
+
+            } catch (error) {
+                currentInput = 'Error';
+                shouldResetDisplay = true;
+                updateDisplay();
+                setTimeout(() => {
+                    clearDisplay();
+                }, 2000);
+            }
+        }
+
+        function updateHistory() {
+            const historyList = document.getElementById('history-list');
+            historyList.innerHTML = '';
+            
+            history.slice().reverse().forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.textContent = `${item.expression} = ${item.result}`;
+                historyList.appendChild(historyItem);
+            });
+        }
+
+        // Keyboard support
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            
+            if (key >= '0' && key <= '9') {
+                appendToDisplay(key);
+            } else if (key === '.') {
+                appendToDisplay('.');
+            } else if (key === '+') {
+                appendToDisplay('+');
+            } else if (key === '-') {
+                appendToDisplay('-');
+            } else if (key === '*') {
+                appendToDisplay('*');
+            } else if (key === '/') {
+                event.preventDefault();
+                appendToDisplay('/');
+            } else if (key === '^') {
+                appendToDisplay('^');
+            } else if (key === '%') {
+                appendToDisplay('%');
+            } else if (key === '(' || key === ')') {
+                appendToDisplay(key);
+            } else if (key === 'v' || key === 'V') {
+                // Only allow 'v' after '1' and check if '1v' already exists anywhere in input
+                if (currentInput.endsWith('1') && !currentInput.includes('1v')) {
+                    appendToDisplay('v');
+                } else {
+                    event.preventDefault();
+                }
+            } else if (key === 'Enter' || key === '=') {
+                event.preventDefault();
+                calculate();
+            } else if (key === 'Escape' || key === 'c' || key === 'C') {
+                clearDisplay();
+            } else if (key === 'Backspace') {
+                deleteLast();
+            } else if (/^[a-zA-Z]$/.test(key)) {
+                // Block all letters except 'v' (handled above)
+                event.preventDefault();
+            } else {
+                // Block all other characters
+                event.preventDefault();
+            }
+        });
+
+        // Secret page functions
+        function showSecretPage() {
+            document.getElementById('secretPage').style.display = 'block';
+            console.log('%c🔐 SECRET ACCESS GRANTED', 'color: #00ff00; font-size: 20px; font-weight: bold;');
+            console.log('%cYou found calculator easter egg!', 'color: #00ff00; font-size: 14px;');
+            console.log('%c1v1.101 = Matrix mode activated', 'color: #00ff00; font-style: italic;');
+            
+            // Reset panic button state when secret page opens
+            currentPresses = 0;
+            updatePanicDisplay();
+        }
+
+        function hideSecretPage() {
+            document.getElementById('secretPage').style.display = 'none';
+            clearDisplay();
+        }
+
+        function setPanicKey(key) {
+            panicKey = key;
+            document.getElementById('panicKeyInput').value = key;
+            document.getElementById('panicKey').textContent = key;
+            document.getElementById('currentKey').textContent = key;
+            updatePanicDisplay();
+        }
+
+        // Panic button functionality
+        let panicKey = 'M';
+        let panicCount = 2;
+        let currentPresses = 0;
+        let panicTimer;
+
+        function updatePanicDisplay() {
+            document.getElementById('panicKey').textContent = panicKey;
+            document.getElementById('panicCount').textContent = panicCount;
+            document.getElementById('currentKey').textContent = panicKey;
+            document.getElementById('currentCount').textContent = panicCount;
+            document.getElementById('currentPresses').textContent = currentPresses;
+            
+            // Update progress bar
+            const progress = (currentPresses / panicCount) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function checkPanicKey(event) {
+            if (event.key.toUpperCase() === panicKey.toUpperCase()) {
+                currentPresses++;
+                updatePanicDisplay();
+                
+                if (currentPresses >= panicCount) {
+                    hideSecretPage();
+                    currentPresses = 0;
+                    clearTimeout(panicTimer);
+                } else {
+                    // Clear previous timer and start new 1-second timer
+                    clearTimeout(panicTimer);
+                    panicTimer = setTimeout(() => {
+                        currentPresses = 0;
+                        updatePanicDisplay();
+                    }, 1000);
+                }
+            }
+        }
+
+        // Update panic settings when inputs change
+        document.getElementById('panicKeyInput').addEventListener('input', function(e) {
+            const value = e.target.value;
+            
+            // Allow any single character
+            if (value.length === 1) {
+                panicKey = value;
+                updatePanicDisplay();
+            } else {
+                // Revert to last valid character
+                e.target.value = panicKey;
+            }
+        });
+
+        document.getElementById('panicCountInput').addEventListener('input', function(e) {
+            if (e.target.value >= 1 && e.target.value <= 10) {
+                panicCount = parseInt(e.target.value);
+                currentPresses = 0;
+                updatePanicDisplay();
+            }
+        });
+
+        // Listen for panic key presses
+        document.addEventListener('keydown', function(event) {
+            // Only check panic key when secret page is visible
+            if (document.getElementById('secretPage').style.display !== 'none') {
+                checkPanicKey(event);
+            }
+        });
+
+        // Initialize display
+        updateDisplay();
+    </script>
+</body>
+</html>
